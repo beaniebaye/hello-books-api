@@ -43,26 +43,17 @@ def handle_books():
 
         return make_response(f"Book {new_book.title} successfully created", 201)
 
-#Uses our books blueprint
-# @books_bp.route("", methods = ["GET"])
-# def handle_books():
-#     books_response = [
-#         {
-#             "id" : book.id,
-#             "title" : book.title,
-#             "description" : book.description
-#         } for book in books
-#     ]
-#     return jsonify(books_response)
 
-# @books_bp.route("/<book_id>", methods = ["GET"])
-# def handle_book(book_id):
-#     book_id = int(book_id)
-#     for book in books:
-#         if book.id == book_id:
-#             return {
-#                 "id" : book.id,
-#                 "title" : book.title,
-#                 "description" : book.description
-#             }
+
+@books_bp.route("/<book_id>", methods = ["GET"])
+def handle_book(book_id):
+    book = Book.query.get(book_id)
+    return vars(book)
+    # for book in books:
+    #     if book.id == book_id:
+    # return {
+    #             "id" : book.id,
+    #             "title" : book.title,
+    #             "description" : book.description
+    #         }
 
