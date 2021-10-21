@@ -15,7 +15,18 @@ def handle_books():
 
         books = Book.query.all()
 
-        return jsonify([vars(book) for book in books])
+        response = []
+        for book in books:
+            response.append(
+                {
+                    "id" : book.id,
+                    "title" : book.title,
+                    "description" : book.description
+                }
+            )
+
+        return jsonify(response)
+
 
     elif request.method == "POST":
         request_body = request.get_json()
@@ -45,7 +56,11 @@ def handle_book(book_id):
 
     if request.method == "GET":
 
-        return vars(book)
+        return {
+            "id" : book.id,
+            "title" : book.title,
+            "description" : book.description
+        }
 
     elif request.method == "PUT":
 
