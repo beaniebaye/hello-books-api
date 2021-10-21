@@ -53,8 +53,13 @@ def handle_book(book_id):
 
         db.session.commit()
 
-        return make_response(f"Book #{book_id} has successfully been updated", )
+        return make_response(f"Book #{book_id} has successfully been updated")
 
 
-    #elif request.method == "DELETE":
+    elif request.method == "DELETE":
+
+        db.session.delete(book)
+        db.session.commit()
+
+        return make_response(f"Book #{book_id} successfully deleted")
 
