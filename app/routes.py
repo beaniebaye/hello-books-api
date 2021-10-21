@@ -40,6 +40,9 @@ def handle_book(book_id):
 
     book = Book.query.get(book_id)
 
+    if book == None:
+        return make_response("", 404)
+
     if request.method == "GET":
 
         return vars(book)
