@@ -13,16 +13,6 @@ def handle_books():
 
     if request.method == "GET":
 
-        # books = Book.query.all()
-        # books_response = []
-        # for book in books:
-        #     books_response.append({
-        #         "id": book.id,
-        #         "title": book.title,
-        #         "description": book.description
-        #     })
-        # return jsonify(books_response)
-
         books = Book.query.all()
 
         return jsonify([vars(book) for book in books])
@@ -47,13 +37,10 @@ def handle_books():
 
 @books_bp.route("/<book_id>", methods = ["GET"])
 def handle_book(book_id):
+
     book = Book.query.get(book_id)
-    return vars(book)
-    # for book in books:
-    #     if book.id == book_id:
-    # return {
-    #             "id" : book.id,
-    #             "title" : book.title,
-    #             "description" : book.description
-    #         }
+
+    if request.method == "GET":
+
+        return vars(book)
 
