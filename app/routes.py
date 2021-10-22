@@ -13,7 +13,12 @@ def handle_books():
 
     if request.method == "GET":
 
-        books = Book.query.all()
+        title_query = request.args.get("title")
+
+        if title_query:
+            books = Book.query.filter_by(title=title_query)
+        else:
+            books = Book.query.all()
 
         response = []
         for book in books:
