@@ -3,8 +3,6 @@ from app.models.book import Book
 from app.models.author import Author
 from flask import Blueprint, jsonify, make_response, request, abort
 
-
-
 #Creates blueprints
 
 books_bp = Blueprint("books", __name__, url_prefix="/books")
@@ -23,6 +21,10 @@ def valid_int(number, parameter_type):
 def get_book_from_id(book_id):
     valid_int(book_id, "book_id")
     return Book.query.get_or_404(book_id, description="{book not found}")
+
+def get_author_from_id(author_id):
+    valid_int(author_id, "author_id")
+    return Author.query.get_or_404(author_id, description="{author not found}")
 
 # Author Routes
 
@@ -115,3 +117,32 @@ def delete_one_book(book_id):
     db.session.commit()
 
     return make_response(f"Book #{book_id} successfully deleted")
+
+# Nested Routes
+
+@authors_bp.route("/<author_id>/books", methods=["POST"])
+def create_book_for_author(author_id):
+
+    author = get_author_from_id(author_id)
+
+    request_body = request.get_json()
+
+    new_book = Book(
+        title=request_body["title"],
+        description=request["description"],
+        author=author
+    )
+
+    db.session.add(new_book)
+    db.session.commit()
+
+    return make_response(f"Book {new_book.title} by {new_book.author.name} successfully created", 201)
+
+@authors_bp.route("/<author_id>/books", methods=["POST"])
+def read_all_books_from_one_author(author_id):
+
+    author = get_author_from_id(author_id)
+
+    books_response = [book.to_dict for book in author.books]
+
+    return jsonify(books_response)
