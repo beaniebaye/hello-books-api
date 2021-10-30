@@ -55,9 +55,9 @@ def create_book():
     db.session.add(new_book)
     db.session.commit()
 
-    return make_response(f"Book {new_book.title} successfully created", 201)
+    return new_book.to_dict(), 201
     
-    
+
 @books_bp.route("/<book_id>", methods = ["GET"])
 def read_one_book(book_id):
     book = get_book_from_id(book_id)
@@ -87,4 +87,3 @@ def delete_one_book(book_id):
     db.session.commit()
 
     return make_response(f"Book #{book_id} successfully deleted")
-
