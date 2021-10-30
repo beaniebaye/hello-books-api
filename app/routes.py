@@ -1,5 +1,6 @@
 from app import db
 from app.models.book import Book
+from app.models.author import Author
 from flask import Blueprint, jsonify, make_response, request, abort
 
 
@@ -7,6 +8,8 @@ from flask import Blueprint, jsonify, make_response, request, abort
 #Creates blueprints
 
 books_bp = Blueprint("books", __name__, url_prefix="/books")
+
+authors_bp = Blueprint("authors", __name__, url_prefix="/authors")
 
 
 # Helper Functions
@@ -18,11 +21,36 @@ def valid_int(number, parameter_type):
         abort(make_response({"error": f"{parameter_type} must be an int"}, 400))
 
 def get_book_from_id(book_id):
-    valid_int(book_id, "dog_id")
+    valid_int(book_id, "book_id")
     return Book.query.get_or_404(book_id, description="{book not found}")
 
+# Author Routes
 
-# Routes
+@authors_bp.route("", methods=["GET"])
+def read_all_authors():
+
+    authors = Author.query.all()
+
+    authors_response = [author.to_dict for author in authors]
+
+    return jsonify(authors_response)
+
+@authors_bp.route("", methods=["POST"])
+def create_author():
+
+    request_body = request.get_json()
+
+    if "name" not in request_body:
+        return make_response("Invalid request", 400)
+
+    new_author = Author(
+            name=request_body["name"]
+        )
+
+    return new_author.to_dict(), 201
+
+
+# Book Routes
 
 @books_bp.route("", methods=["GET"])
 def read_all_books():
@@ -48,8 +76,8 @@ def create_book():
         return make_response("Invalid request", 400)
 
     new_book = Book(
-            title=request_body["title"],
-            description = request_body["description"]
+        title=request_body["title"],
+        description = request_body["description"]
         )
 
     db.session.add(new_book)
