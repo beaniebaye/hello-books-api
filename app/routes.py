@@ -1,6 +1,7 @@
 from app import db
 from app.models.book import Book
 from app.models.author import Author
+from app.models.genre import Genre
 from flask import Blueprint, jsonify, make_response, request, abort
 
 #Creates blueprints
@@ -8,6 +9,8 @@ from flask import Blueprint, jsonify, make_response, request, abort
 books_bp = Blueprint("books", __name__, url_prefix="/books")
 
 authors_bp = Blueprint("authors", __name__, url_prefix="/authors")
+
+genres_bp = Blueprint("genres", __name__, url_prefix="/genres")
 
 
 # Helper Functions
@@ -146,3 +149,24 @@ def read_all_books_from_one_author(author_id):
     books_response = [book.to_dict for book in author.books]
 
     return jsonify(books_response)
+
+# genre routes
+
+@genres_bp.route("", methods=["GET"])
+def read_all_genres():
+    genres = Genre.query.all()
+
+    response_body = [genre.to_dict for genre in genres]
+
+    return jsonify(response_body)
+
+@genres_bp.route("", methods=["POST"])
+def create_genre():
+    request_body = request.get_json()
+
+    genre = Genre(name=request_body["name"])
+
+    db.session.add(genre)
+    db.session.commit()
+
+    return jsonify(f"Genre {genre.name} was successfully created"), 201
