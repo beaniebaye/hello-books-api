@@ -170,3 +170,22 @@ def create_genre():
     db.session.commit()
 
     return jsonify(f"Genre {genre.name} was successfully created"), 201
+
+# Nested routes for books and genre
+
+@books_bp.route("/<book_id>/assign_genres", methods=["PATCH"])
+def assign_genres(book_id):
+    book = Book.query.get(book_id)
+
+    if book is None:
+        return make_response(f"Book #{book.id} not found", 404)
+  
+    request_body = request.get_json()
+
+    for id in request_body["genres"]:
+        book.genres.append(Genre.query.get(id))
+  
+    db.session.commit()
+
+    return make_response("Genres successfully added", 200)
+

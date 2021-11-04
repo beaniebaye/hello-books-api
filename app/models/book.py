@@ -14,3 +14,21 @@ class Book(db.Model):
             "title": self.title,
             "description": self.description
         }
+
+    def to_dict_with_author(self):
+        genres = []
+        for genre in self.genres:
+            genres.append(genre.name)
+
+        if self.author:
+            author = self.author.name
+        else:
+            author = None
+
+        return {
+                    "id": self.id,
+                    "title": self.title,
+                    "description": self.description,
+                    "genres": genres,
+                    "author": author
+                }
